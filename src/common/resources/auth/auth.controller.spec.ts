@@ -8,6 +8,12 @@ import { JwtStrategy } from './strategies/jwt.strategies';
 
 describe('AuthController', () => {
   let controller: AuthController;
+  let userService: UsersService;
+  const testing = {
+    name: 'Testing',
+    email: 'email4Testing4@testing.com',
+    password: 'passwordTesting'
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,9 +30,35 @@ describe('AuthController', () => {
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
+    userService = module.get<UsersService>(UsersService);
+  });
+
+  afterAll(async () => {
+    await userService.deleteTestingUser([testing.email]);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  it('should be successfully signUp user', async () => {
+    const result = await controller.register(testing);
+    expect(result).toHaveProperty('success');
+    expect(result).toHaveProperty('message');
+    expect(result).toHaveProperty('data');
+    expect(result.data).toHaveProperty('id');
+    expect(result.data).toHaveProperty('email');
+    expect(result.data).toHaveProperty('name');
+  });
+
+  it('should be successfully signIn user', async () => {
+    const result = await controller.login(testing);
+    expect(result).toHaveProperty('success');
+    expect(result).toHaveProperty('message');
+    expect(result).toHaveProperty('data');
+    expect(result.data).toHaveProperty('id');
+    expect(result.data).toHaveProperty('email');
+    expect(result.data).toHaveProperty('name');
+    expect(result.data).toHaveProperty('token');
   });
 });

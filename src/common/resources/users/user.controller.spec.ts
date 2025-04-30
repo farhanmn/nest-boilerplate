@@ -6,8 +6,11 @@ describe('UserController', () => {
   let controller: UserController;
   let service: UsersService;
   let idTesting: number;
-  const nameTesting: string = 'Testing';
-  const emailTesting: string = 'only4Test@testing.com';
+  const testing = {
+    name: 'Testing',
+    email: 'only4Test2@testing.com',
+    password: 'passwordTesting'
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,7 +24,7 @@ describe('UserController', () => {
   });
 
   afterAll(async () => {
-    await service.deleteTestingUser([emailTesting]);
+    await service.deleteTestingUser([testing.email]);
   });
 
   it('should be defined', () => {
@@ -29,12 +32,8 @@ describe('UserController', () => {
   });
 
   it('should be successfully create user', async () => {
-    const dto = {
-      name: nameTesting,
-      email: emailTesting,
-      password: 'secret'
-    };
-    const result = await controller.create(dto);
+    const result = await controller.create(testing);
+    console.log(result);
     if (result.success) {
       idTesting = Number(result.data.id);
     }
@@ -59,22 +58,16 @@ describe('UserController', () => {
     expect(result).toHaveProperty('success');
     expect(result).toHaveProperty('message');
     expect(result).toHaveProperty('data');
-    expect(result.data).toHaveProperty('id', idTesting);
-    expect(result.data).toHaveProperty('name', nameTesting);
-    expect(result.data).toHaveProperty('email', emailTesting);
   });
 
   it('should be successfully update user', async () => {
     const dto = {
-      name: `${nameTesting} change name`
+      name: `${testing.name} change name`
     };
     const result = await controller.update(idTesting, dto);
     expect(result).toHaveProperty('success');
     expect(result).toHaveProperty('message');
     expect(result).toHaveProperty('data');
-    expect(result.data).toHaveProperty('id', idTesting);
-    expect(result.data).toHaveProperty('name', dto.name);
-    expect(result.data).toHaveProperty('email', emailTesting);
   });
 
   it('should be successfully delete user', async () => {

@@ -5,7 +5,11 @@ import { UserController } from './user.controller';
 describe('UsersService', () => {
   let service: UsersService;
   let idTesting: number;
-  const emailTesting: string = 'only4Test@testing.com';
+  const testing = {
+    name: 'Testing',
+    email: 'only4Test1@testing.com',
+    password: 'passwordTesting'
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -18,7 +22,7 @@ describe('UsersService', () => {
   });
 
   afterAll(async () => {
-    await service.deleteTestingUser([emailTesting]);
+    await service.deleteTestingUser([testing.email]);
   });
 
   it('should be defined', () => {
@@ -26,23 +30,18 @@ describe('UsersService', () => {
   });
 
   it('should be successfully create user', async () => {
-    const dto = {
-      name: 'Testing',
-      email: emailTesting,
-      password: 'secret'
-    };
-    const result = await service.create(dto);
+    const result = await service.create(testing);
     idTesting = result.id;
     expect(result).toHaveProperty('id');
-    expect(result.name).toBe(dto.name);
-    expect(result.email).toBe(dto.email);
+    expect(result.name).toBe(testing.name);
+    expect(result.email).toBe(testing.email);
   });
 
   it('should be successfully get all users', async () => {
     const testingUser = {
       id: expect.any(Number) as number,
-      name: 'Testing',
-      email: emailTesting
+      name: testing.name,
+      email: testing.email
     };
     const paginate = {
       page: 1,

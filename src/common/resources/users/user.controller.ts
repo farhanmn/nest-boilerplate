@@ -60,7 +60,14 @@ export class UserController {
       if (error instanceof HttpException) {
         throw error;
       }
-      return errorResponse('Internal Server Error');
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Internal Server Error';
+
+      return errorResponse(message);
     }
   }
 
@@ -93,7 +100,14 @@ export class UserController {
       if (error instanceof HttpException) {
         throw error;
       }
-      return errorResponse('Internal Server Error');
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Internal Server Error';
+
+      return errorResponse(message);
     }
   }
 
@@ -116,7 +130,14 @@ export class UserController {
       if (error instanceof HttpException) {
         throw error;
       }
-      return errorResponse('Internal Server Error');
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Internal Server Error';
+
+      return errorResponse(message);
     }
   }
 
@@ -141,7 +162,14 @@ export class UserController {
       if (error instanceof HttpException) {
         throw error;
       }
-      return errorResponse('Internal Server Error');
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Internal Server Error';
+
+      return errorResponse(message);
     }
   }
 
@@ -155,13 +183,20 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   async remove(@Param('id') id: number): Promise<ApiResponses<boolean>> {
     try {
-      const user = await this.userService.remove(id);
+      const user = await this.userService.remove(Number(id));
       return successResponse('User deleted successfully', user);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
       }
-      return errorResponse('Internal Server Error');
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Internal Server Error';
+
+      return errorResponse(message);
     }
   }
 }
