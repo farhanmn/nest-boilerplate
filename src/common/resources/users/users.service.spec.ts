@@ -1,14 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
-import { KnexModule } from '../../../config/database/knex.module';
+import { UserController } from './user.controller';
 
 describe('UsersService', () => {
   let service: UsersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [KnexModule],
-      providers: [UsersService]
+      controllers: [UserController],
+      providers: [UsersService],
+      exports: [UsersService]
     }).compile();
 
     service = module.get<UsersService>(UsersService);

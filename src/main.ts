@@ -10,10 +10,9 @@ async function bootstrap() {
   app.useGlobalFilters(new JwtAuthExceptionFilter());
 
   const config = new DocumentBuilder()
-    .setTitle('My API')
-    .setDescription('API documentation for my app')
+    .setTitle('Nest Boilerplate')
+    .setDescription('API documentation')
     .setVersion('1.0')
-    .addTag('users') // optional
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
