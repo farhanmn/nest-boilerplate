@@ -17,6 +17,10 @@ describe('UsersService', () => {
     service = module.get<UsersService>(UsersService);
   });
 
+  afterAll(async () => {
+    await service.deleteTestingUser([emailTesting]);
+  });
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
