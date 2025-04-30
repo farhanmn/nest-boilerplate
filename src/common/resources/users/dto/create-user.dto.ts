@@ -15,5 +15,5 @@ export class CreateUserDto {
   password: string;
 
   @IsOptional()
-  salt: string;
+  salt?: string;
 }
