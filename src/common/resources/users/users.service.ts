@@ -33,8 +33,8 @@ export class UsersService {
       totalPages: number;
     };
   }> {
-    const { page = 1, limit = 10 } = paginationDto || {};
-
+    const page = Number(paginationDto?.page) || 1;
+    const limit = Number(paginationDto?.limit) || 10;
     const users = await prismaClient.user.findMany({
       where: {
         ...(name
@@ -116,6 +116,22 @@ export class UsersService {
     const user = await prismaClient.user.delete({
       where: {
         id
+      }
+    });
+
+    if (!user) {
+      return false;
+    }
+
+    return true;
+  }
+
+  async deleteTestingUser(email: string[]) {
+    const user = await prismaClient.user.deleteMany({
+      where: {
+        email: {
+          in: email
+        }
       }
     });
 

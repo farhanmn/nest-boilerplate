@@ -11,6 +11,8 @@ import { registerDto } from './dto/register.dto';
 import { loginDto } from './dto/login.dto';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { errorResponse, successResponse } from '../../../utils/response';
+import { ApiResponses } from '../../models/response';
+import { UserData } from '../../models/user';
 
 @Controller('auth')
 export class AuthController {
@@ -24,8 +26,23 @@ export class AuthController {
     status: 201,
     description: 'User registered'
   })
-  register(@Body() dto: registerDto) {
-    return this.authService.signUp(dto);
+  async register(@Body() dto: registerDto): Promise<ApiResponses<UserData>> {
+    try {
+      const user = await this.authService.signUp(dto);
+      return successResponse('CREATED', user);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Internal Server Error';
+
+      return errorResponse(message);
+    }
   }
 
   @Post('login')
@@ -36,7 +53,14 @@ export class AuthController {
     status: 200,
     description: 'User login'
   })
-  async login(@Body() dto: loginDto) {
+  async login(@Body() dto: loginDto): Promise<
+    ApiResponses<{
+      id: number;
+      email: string;
+      name: string;
+      token: string;
+    }>
+  > {
     try {
       const user = await this.authService.signIn(dto);
       return successResponse('OK', user);
@@ -44,7 +68,14 @@ export class AuthController {
       if (error instanceof HttpException) {
         throw error;
       }
-      return errorResponse('Internal Server Error');
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Internal Server Error';
+
+      return errorResponse(message);
     }
   }
 }

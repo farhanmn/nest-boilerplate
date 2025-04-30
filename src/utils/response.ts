@@ -1,4 +1,4 @@
-import { HttpStatus } from '@nestjs/common';
+import { ErrorResponse, SuccessResponse } from '../common/models/response';
 
 export function metaPagination(total: number, page: number, limit: number) {
   return {
@@ -9,7 +9,11 @@ export function metaPagination(total: number, page: number, limit: number) {
   };
 }
 
-export function successResponse<T>(message: string, data: T, meta?: T) {
+export function successResponse<T>(
+  message: string,
+  data: T,
+  meta?: object
+): SuccessResponse<T> {
   return {
     success: true,
     message,
@@ -20,13 +24,11 @@ export function successResponse<T>(message: string, data: T, meta?: T) {
 
 export function errorResponse(
   message: string,
-  errorCode = 'Internal Server Error',
-  statusCode = HttpStatus.INTERNAL_SERVER_ERROR
-) {
+  errorCode: string = 'Internal Server Error'
+): ErrorResponse {
   return {
     success: false,
-    message,
-    errorCode,
-    statusCode
+    message: message || errorCode,
+    data: {}
   };
 }
