@@ -9,7 +9,8 @@ import {
   UseGuards,
   HttpStatus,
   HttpCode,
-  HttpException
+  HttpException,
+  Query
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -25,6 +26,9 @@ import {
 import { ResponseDto } from './dto/response.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { errorResponse, successResponse } from '../../../utils/response';
+import { ApiResponses } from '../../models/response';
+import { UserPaginationDto } from './dto/user-pagination.dto';
+import { UserData } from '../../models/user';
 
 @Controller('users')
 export class UserController {
@@ -48,8 +52,23 @@ export class UserController {
     }
   })
   @UseGuards(JwtAuthGuard)
-  create(@Body() dto: CreateUserDto) {
-    return this.userService.create(dto);
+  async create(@Body() dto: CreateUserDto): Promise<ApiResponses<UserData>> {
+    try {
+      const user = await this.userService.create(dto);
+      return successResponse('Create user successfully', user);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Internal Server Error';
+
+      return errorResponse(message);
+    }
   }
 
   @Get()
@@ -62,15 +81,33 @@ export class UserController {
     isArray: true
   })
   @UseGuards(JwtAuthGuard)
-  async findAll() {
+  async findAll(
+    @Query() query: UserPaginationDto,
+    @Query('name') name?: string
+  ): Promise<
+    ApiResponses<{
+      data: UserData[];
+      meta: UserPaginationDto;
+    }>
+  > {
     try {
-      const users = await this.userService.findAll({});
+      const users = await this.userService.findAll({
+        name,
+        paginationDto: query
+      });
       return successResponse('OK', users);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
       }
-      return errorResponse('Internal Server Error');
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Internal Server Error';
+
+      return errorResponse(message);
     }
   }
 
@@ -83,8 +120,25 @@ export class UserController {
     type: ResponseDto
   })
   @UseGuards(JwtAuthGuard)
-  findOne(@Param('id') id: number) {
-    return this.userService.findOne(id);
+  async findOne(
+    @Param('id') id: number
+  ): Promise<ApiResponses<UserData | null>> {
+    try {
+      const user = await this.userService.findOne(id);
+      return successResponse('OK', user);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Internal Server Error';
+
+      return errorResponse(message);
+    }
   }
 
   @Put(':id')
@@ -97,8 +151,26 @@ export class UserController {
     type: ResponseDto
   })
   @UseGuards(JwtAuthGuard)
-  update(@Param('id') id: number, @Body() dto: UpdateUserDto) {
-    return this.userService.update(id, dto);
+  async update(
+    @Param('id') id: number,
+    @Body() dto: UpdateUserDto
+  ): Promise<ApiResponses<UserData>> {
+    try {
+      const user = await this.userService.update(id, dto);
+      return successResponse('User updated successfully', user);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Internal Server Error';
+
+      return errorResponse(message);
+    }
   }
 
   @Delete(':id')
@@ -109,7 +181,22 @@ export class UserController {
     description: 'User deleted successfully'
   })
   @UseGuards(JwtAuthGuard)
-  remove(@Param('id') id: number) {
-    return this.userService.remove(id);
+  async remove(@Param('id') id: number): Promise<ApiResponses<boolean>> {
+    try {
+      const user = await this.userService.remove(Number(id));
+      return successResponse('User deleted successfully', user);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Internal Server Error';
+
+      return errorResponse(message);
+    }
   }
 }

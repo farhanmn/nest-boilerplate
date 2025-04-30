@@ -10,12 +10,6 @@ interface User extends UserData {
   salt: string | null;
 }
 
-interface UserToken {
-  userid: number;
-  username: string;
-  token: string;
-}
-
 interface RegisterRequest extends Omit<UserData, 'id'> {
   password: string;
 }
@@ -29,11 +23,4 @@ interface LoginResponse extends UserData {
   token: string;
 }
 
-export {
-  User,
-  UserData,
-  UserToken,
-  RegisterRequest,
-  LoginRequest,
-  LoginResponse
-};
+export { User, UserData, RegisterRequest, LoginRequest, LoginResponse };

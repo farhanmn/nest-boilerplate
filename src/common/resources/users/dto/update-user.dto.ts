@@ -1,9 +1,12 @@
-import { IsNumber } from 'class-validator';
-import { CreateUserDto } from './create-user.dto';
+import { IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateUserDto extends CreateUserDto {
-  @IsNumber()
-  @ApiProperty({ example: 1 })
-  id: number;
+export class UpdateUserDto {
+  @IsOptional()
+  @ApiProperty({ example: 'name' })
+  name?: string;
+
+  @IsOptional()
+  @ApiProperty({ example: 'password' })
+  password?: string;
 }
