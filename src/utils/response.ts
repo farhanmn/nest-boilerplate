@@ -1,4 +1,7 @@
-import { ErrorResponse, SuccessResponse } from '../common/models/response';
+import {
+  ErrorResponse,
+  SuccessResponse
+} from '../common/types/response.interface';
 
 export function metaPagination(total: number, page: number, limit: number) {
   return {

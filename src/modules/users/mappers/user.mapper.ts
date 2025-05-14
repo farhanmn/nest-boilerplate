@@ -1,7 +1,6 @@
 import { User as PrismaUser } from '@prisma/client';
-import { User } from '../entities/user.entity';
 
-export function toUser(user: PrismaUser): User {
+export function toUser(user: PrismaUser) {
   return {
     id: user.id,
     name: user.name,
@@ -9,6 +8,6 @@ export function toUser(user: PrismaUser): User {
   };
 }
 
-export function toUserList(users: PrismaUser[]): User[] {
+export function toUserList(users: PrismaUser[]) {
   return users.map(toUser);
 }

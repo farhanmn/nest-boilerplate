@@ -1,6 +1,6 @@
 import { match } from './crypto';
 import { config } from 'dotenv';
-import { LoginRequest, User, UserData } from '../common/models/user';
+import { LoginRequest, User, UserData } from '../common/types/user.interface';
 config();
 
 const verifyPassword = (

@@ -18,14 +18,14 @@ export class JwtAuthExceptionFilter implements ExceptionFilter {
     if (message === 'jwt expired') {
       return response.status(HttpStatus.UNAUTHORIZED).json({
         statusCode: 401,
-        message: 'Token sudah kadaluarsa',
+        message: 'Expired token',
         error: 'Unauthorized'
       });
     }
 
     return response.status(HttpStatus.UNAUTHORIZED).json({
       statusCode: 401,
-      message: 'Token tidak valid',
+      message: 'Invalid token',
       error: 'Unauthorized'
     });
   }
