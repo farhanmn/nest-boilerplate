@@ -1,16 +1,16 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
-import { verifyPassword } from '../../../utils/user';
+import { verifyPassword } from '../../utils/user';
 import {
   LoginRequest,
   LoginResponse,
   RegisterRequest,
   User as UserWithPass,
   UserData
-} from '../../models/user';
-import { User } from '../users/entities/user.entity';
-import { hash } from '../../../utils/crypto';
+} from '../../common/types/user.interface';
+import { User } from '@prisma/client';
+import { hash } from '../../utils/crypto';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +19,9 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async signUp(request: RegisterRequest): Promise<User> {
+  async signUp(
+    request: RegisterRequest
+  ): Promise<Omit<User, 'password' | 'salt'>> {
     const user = await this.usersService.findEmail(request.email);
 
     if (user) {

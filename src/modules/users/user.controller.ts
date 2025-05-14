@@ -25,10 +25,12 @@ import {
 } from '@nestjs/swagger';
 import { ResponseDto } from './dto/response.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { errorResponse, successResponse } from '../../../utils/response';
-import { ApiResponses } from '../../models/response';
+import { errorResponse, successResponse } from '../../utils/response';
+import { ApiResponses } from '../../common/types/response.interface';
 import { UserPaginationDto } from './dto/user-pagination.dto';
-import { UserData } from '../../models/user';
+import { User } from '@prisma/client';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 
 @Controller('users')
 export class UserController {
@@ -51,8 +53,11 @@ export class UserController {
       }
     }
   })
-  @UseGuards(JwtAuthGuard)
-  async create(@Body() dto: CreateUserDto): Promise<ApiResponses<UserData>> {
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  async create(
+    @Body() dto: CreateUserDto
+  ): Promise<ApiResponses<Omit<User, 'password' | 'salt'>>> {
     try {
       const user = await this.userService.create(dto);
       return successResponse('Create user successfully', user);
@@ -80,13 +85,14 @@ export class UserController {
     type: ResponseDto,
     isArray: true
   })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   async findAll(
     @Query() query: UserPaginationDto,
     @Query('name') name?: string
   ): Promise<
     ApiResponses<{
-      data: UserData[];
+      data: Omit<User, 'password' | 'salt'>[];
       meta: UserPaginationDto;
     }>
   > {
@@ -119,10 +125,11 @@ export class UserController {
     description: 'User data',
     type: ResponseDto
   })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   async findOne(
     @Param('id') id: number
-  ): Promise<ApiResponses<UserData | null>> {
+  ): Promise<ApiResponses<Omit<User, 'password' | 'salt'> | null>> {
     try {
       const user = await this.userService.findOne(id);
       return successResponse('OK', user);
@@ -150,11 +157,12 @@ export class UserController {
     description: 'User updated successfully',
     type: ResponseDto
   })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   async update(
     @Param('id') id: number,
     @Body() dto: UpdateUserDto
-  ): Promise<ApiResponses<UserData>> {
+  ): Promise<ApiResponses<Omit<User, 'password' | 'salt'>>> {
     try {
       const user = await this.userService.update(id, dto);
       return successResponse('User updated successfully', user);
@@ -180,7 +188,8 @@ export class UserController {
     status: 200,
     description: 'User deleted successfully'
   })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   async remove(@Param('id') id: number): Promise<ApiResponses<boolean>> {
     try {
       const user = await this.userService.remove(Number(id));
