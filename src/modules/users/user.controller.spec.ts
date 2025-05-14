@@ -12,7 +12,7 @@ describe('UserController', () => {
     password: 'passwordTesting'
   };
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
       providers: [UsersService],

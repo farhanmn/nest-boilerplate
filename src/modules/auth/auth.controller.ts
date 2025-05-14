@@ -10,9 +10,9 @@ import { AuthService } from './auth.service';
 import { registerDto } from './dto/register.dto';
 import { loginDto } from './dto/login.dto';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { errorResponse, successResponse } from '../../../utils/response';
-import { ApiResponses } from '../../models/response';
-import { UserData } from '../../models/user';
+import { errorResponse, successResponse } from '../../utils/response';
+import { ApiResponses } from '../../common/types/response.interface';
+import { User } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -26,7 +26,9 @@ export class AuthController {
     status: 201,
     description: 'User registered'
   })
-  async register(@Body() dto: registerDto): Promise<ApiResponses<UserData>> {
+  async register(
+    @Body() dto: registerDto
+  ): Promise<ApiResponses<Omit<User, 'password' | 'salt'>>> {
     try {
       const user = await this.authService.signUp(dto);
       return successResponse('CREATED', user);

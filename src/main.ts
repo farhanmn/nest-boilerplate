@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { RestLoggingInterceptor } from './application/logging';
-import { JwtAuthExceptionFilter } from './common/resources/auth/filters/jwt-auth-exception.filter';
+import { JwtAuthExceptionFilter } from './modules/auth/filters/jwt-auth-exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {

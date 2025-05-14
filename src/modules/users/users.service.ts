@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
-import { User as UserWithPass } from '../../models/user';
-import { prismaClient } from '../../../application/database';
+import { User } from '@prisma/client';
+import { User as UserWithPass } from '../../common/types/user.interface';
+import { prismaClient } from '../../application/database';
 import { toUser, toUserList } from './mappers/user.mapper';
 import { UserPaginationDto } from './dto/user-pagination.dto';
-import { metaPagination } from '../../../utils/response';
+import { metaPagination } from '../../utils/response';
 
 @Injectable()
 export class UsersService {
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(
+    createUserDto: CreateUserDto
+  ): Promise<Omit<User, 'password' | 'salt'>> {
     const user = await prismaClient.user.create({
       data: createUserDto
     });
@@ -25,7 +27,7 @@ export class UsersService {
     name?: string;
     paginationDto?: UserPaginationDto;
   }): Promise<{
-    data: User[];
+    data: Omit<User, 'password' | 'salt'>[];
     meta: {
       total: number;
       page: number;
@@ -72,7 +74,7 @@ export class UsersService {
     };
   }
 
-  async findOne(id: number): Promise<User | null> {
+  async findOne(id: number): Promise<Omit<User, 'password' | 'salt'> | null> {
     const user = await prismaClient.user.findUnique({
       where: {
         id
@@ -101,7 +103,10 @@ export class UsersService {
     });
   }
 
-  async update(id: number, updateUserInput: UpdateUserDto): Promise<User> {
+  async update(
+    id: number,
+    updateUserInput: UpdateUserDto
+  ): Promise<Omit<User, 'password' | 'salt'>> {
     const user = await prismaClient.user.update({
       data: updateUserInput,
       where: {
