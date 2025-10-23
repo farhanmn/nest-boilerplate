@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { RestLoggingInterceptor } from './application/logging';
 import { JwtAuthExceptionFilter } from './modules/auth/filters/jwt-auth-exception.filter';
@@ -8,6 +9,16 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalInterceptors(new RestLoggingInterceptor());
   app.useGlobalFilters(new JwtAuthExceptionFilter());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true
+      }
+    })
+  );
 
   const config = new DocumentBuilder()
     .setTitle('Nest Boilerplate')
